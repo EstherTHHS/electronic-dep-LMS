@@ -10,7 +10,7 @@ class Lab extends Model implements HasMedia
 {
     use InteractsWithMedia;
     protected $fillable = [
-        'name',
+        'title',
         'description',
     ];
 }

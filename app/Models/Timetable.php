@@ -3,29 +3,21 @@
 namespace App\Models;
 
 use App\Models\Year;
-use App\Models\Subject;
+use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Timetable extends Model
 {
+    use InteractsWithMedia;
+
     protected $fillable = [
-        'year_id',
-        'subject_id',
-        'start_time',
-        'end_time',
-        'day',
-        'classroom',
-        'class_type',
-        'academic_session',
+        'name',
+        'description',
     ];
 
     public function year()
     {
         return $this->belongsTo(Year::class);
-    }
-
-    public function subject()
-    {
-        return $this->belongsTo(Subject::class);
     }
 }

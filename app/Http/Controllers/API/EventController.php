@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Lab;
 use App\Models\Event;
+use App\Models\Timetable;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\Event\EventRepositoryInterface;
@@ -23,7 +24,7 @@ class EventController extends Controller
         $event = $this->eventRepository->getEventById($id);
         ResponseData($event);
     }
-    
+
     public function storeEvent(Request $request){
         $event = $this->eventRepository->storeEvent($request->all());
         ResponseData($event);
@@ -53,28 +54,87 @@ class EventController extends Controller
         ResponseData($lab);
     }
 
-    public function updateOrCreateTimetable(Request $request){
-        $timetable = $this->eventRepository->updateOrCreateTimetable($request->all());
-        ResponseData($timetable);
+    public function getTimetables()
+    {
+        $timetables = Timetable::with(['year', 'media'])->get();
+
+        return response()->json($timetables);
     }
 
-    public function getTimetablesByYearId($yearId){
-        $timetables = $this->eventRepository->getTimetablesByYearId($yearId);
-        ResponseData($timetables);
+    /**
+     * Store a newly created timetable in storage.
+     */
+    public function storeTimetable(Request $request)
+    {
+        $validated = $request->validate([
+            'year_id' => 'required|exists:years,id',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120', // 5MB max
+        ]);
+
+        $timetable = Timetable::create($validated);
+
+        if ($request->hasFile('file')) {
+            $timetable->addMediaFromRequest('file')->toMediaCollection('timetable_files');
+        }
+
+        return response()->json([
+            'message' => 'Timetable created successfully.',
+            'data' => $timetable->load(['year', 'media'])
+        ], 201);
     }
 
-    public function getTimetables(Request $request){
-        $timetables = $this->eventRepository->getTimetables($request);
-        ResponseData($timetables);
+    /**
+     * Display the specified timetable.
+     */
+    public function getTimetable($id)
+    {
+        $timetable = Timetable::with(['year', 'media'])->findOrFail($id);
+
+        return response()->json($timetable);
     }
 
-    public function getTimetableById($id){
-        $timetable = $this->eventRepository->getTimetableById($id);
-        ResponseData($timetable);
+    /**
+     * Update the specified timetable in storage.
+     */
+    public function updateTimetable(Request $request, $id)
+    {
+        $timetable = Timetable::findOrFail($id);
+
+        $validated = $request->validate([
+            'year_id' => 'sometimes|exists:years,id',
+            'name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120',
+        ]);
+
+        $timetable->update($validated);
+
+        if ($request->hasFile('file')) {
+            // Replace old file with the new one
+            $timetable->clearMediaCollection('timetable_files');
+            $timetable->addMediaFromRequest('file')->toMediaCollection('timetable_files');
+        }
+
+        return response()->json([
+            'message' => 'Timetable updated successfully.',
+            'data' => $timetable->load(['year', 'media'])
+        ]);
     }
 
-    public function deleteTimetableById($id){
-        $timetable = $this->eventRepository->deleteTimetableById($id);
-        ResponseData($timetable);
+    /**
+     * Remove the specified timetable from storage.
+     */
+    public function deleteTimetable($id)
+    {
+        $timetable = Timetable::findOrFail($id);
+
+        $timetable->clearMediaCollection('timetable_files');
+        $timetable->delete();
+
+        return response()->json([
+            'message' => 'Timetable deleted successfully.'
+        ]);
     }
 }

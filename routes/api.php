@@ -71,10 +71,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/labs/{id}', 'deleteLabById');
 
         Route::get('/timetables', 'getTimetables');
-        Route::post('/timetables',  'updateOrCreateTimetable');
-        Route::get('/timetables/year/{yearId}', 'getTimetablesByYearId');
-        Route::get('/timetables/{id}', 'getTimetableById');
-        Route::delete('/timetables/{id}', 'deleteTimetableById');
+        Route::post('/timetables',  'storeTimetable');
+        Route::post('/timetables/{id}',  'updateTimetable');
+        Route::get('/timetables/{id}', 'getTimetable');
+        Route::delete('/timetables/{id}', 'deleteTimetable');
     });
     Route::controller(AttendanceController::class)->group(function () {
         Route::post('/attendances',  'storeAttendance');

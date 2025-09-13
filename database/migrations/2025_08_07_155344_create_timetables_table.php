@@ -14,13 +14,8 @@ return new class extends Migration
         Schema::create('timetables', function (Blueprint $table) {
             $table->id();
             $table->foreignId('year_id')->constrained('years')->onDelete('cascade');
-            $table->foreignId('subject_id')->constrained('subjects')->onDelete('cascade');
-            $table->time('start_time');
-            $table->time('end_time');
-            $table->string('day');
-            $table->string('classroom')->nullable();
-            $table->enum('class_type', ['L', 'T', 'P']);
-            $table->string('academic_session')->nullable();
+            $table->string('name');
+            $table->text('description');
             $table->timestamps();
         });
     }
