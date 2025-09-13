@@ -28,16 +28,16 @@ class AdminSeeder extends Seeder
             'name' => 'teacher',
             'email' => 'teacher@example.com',
             'phone' => '0922',
-            'password' => '2222',
+            'password' => 'password',
             'is_active' => 1,
         ]);
         $user2->assignRole('teacher');
 
         $user3 = User::create([
             'name' => 'student',
-            'email' => 'studnet@example.com',
+            'email' => 'student@example.com',
             'phone' => '0933',
-            'password' => Hash::make('password'),
+            'password' => 'password',
             'is_active' => 1,
             ]);
         $user3->assignRole('student');

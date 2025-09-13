@@ -11,6 +11,7 @@ use App\Http\Controllers\API\TeacherController;
 use App\Http\Controllers\API\AssignmetController;
 use App\Http\Controllers\API\AssignmentController;
 use App\Http\Controllers\API\AttendanceController;
+use App\Http\Controllers\API\StatsController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/users', [UserController::class, 'store']);
@@ -20,6 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(UserController::class)->group(function () {
         Route::get('/users',  'index');
+        Route::post('/users', 'store');
         Route::get('/users/{id}',  'getById');
         Route::post('/users/{id}',  'update');
         Route::delete('/users/{id}',  'delete');
@@ -76,5 +78,12 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::controller(AttendanceController::class)->group(function () {
         Route::post('/attendances',  'storeAttendance');
+        Route::get('/attendances' , 'index');
+        Route::get('/attendances/{id}' , 'show');
+        Route::post('/attendances/{id}' , 'update');
+        Route::delete('/attendances/{id}' , 'destroy');
+    });
+    Route::controller(StatsController::class)->group(function() {
+        Route::get('/stats', 'index');
     });
 });
