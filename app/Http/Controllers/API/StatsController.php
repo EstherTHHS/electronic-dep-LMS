@@ -4,6 +4,9 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Subject;
+use App\Models\Event;
+use App\Http\Controllers\Controller;
 
 class StatsController extends Controller
 {
