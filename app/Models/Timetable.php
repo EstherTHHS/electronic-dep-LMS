@@ -7,11 +7,12 @@ use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Timetable extends Model
+class Timetable extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
     protected $fillable = [
+        'year_id',
         'name',
         'description',
     ];
@@ -19,5 +20,11 @@ class Timetable extends Model
     public function year()
     {
         return $this->belongsTo(Year::class);
+    }
+
+    // You can define collections if needed
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('timetables');
     }
 }

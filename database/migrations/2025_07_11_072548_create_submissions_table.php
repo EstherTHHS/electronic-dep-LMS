@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('submitted_at')->nullable();
             $table->unsignedSmallInteger('total_mark');
             $table->decimal('mark_in_percentage', 5, 2);
-            $table->foreignId('graded_by')->nullable()->constrained('users')->cascadeOnDelete();     
+            $table->foreignId('graded_by')->nullable()->constrained('users')->cascadeOnDelete();
             $table->string('remark')->nullable();
             $table->timestamps();
         });
