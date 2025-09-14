@@ -9,26 +9,13 @@ use App\Repositories\Admin\AdminRepositoryInterface;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
-class UserController extends Controller implements HasMiddleware
+class UserController extends Controller
 {
     private AdminRepositoryInterface $adminRepository;
     public function __construct(AdminRepositoryInterface $adminRepository)
     {
         $this->adminRepository = $adminRepository;
     }
-    public static function middleware(): array
-    {
-        return [
-            new Middleware('permission:adminList', only: ['index']),
-            new Middleware('permission:adminCreate', only: ['store']),
-            new Middleware('permission:adminEdit', only: ['getById']),
-            new Middleware('permission:adminUpdate', only: ['update']),
-            new Middleware('permission:adminDelete', only: ['delete']),
-            new Middleware('permission:adminStatus', only: ['updateStatus']),
-            new Middleware('permission:adminChangePassword', only: ['changePassword']),
-        ];
-    }
-
 
     public function index(Request $request)
     {
