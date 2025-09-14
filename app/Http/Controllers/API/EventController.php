@@ -70,7 +70,6 @@ class EventController extends Controller
             'year_id' => 'required|exists:years,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120', // 5MB max
         ]);
 
         $timetable = Timetable::create($validated);

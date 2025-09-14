@@ -19,7 +19,7 @@ class AdminRepository implements AdminRepositoryInterface
                 $q->where('name', $request->role);
             });
         }
-        
+
         return $query->paginate(config('common.list_count'));
     }
 
