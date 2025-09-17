@@ -65,7 +65,6 @@ class AssignmentRepository implements AssignmentRepositoryInterface
         DB::beginTransaction();
         try {
             $uploadedFile = $data['file'] ?? null;
-            // unset($data['file']);
             $assignment = Assignment::updateOrCreate(['id' => $data['id'] ?? null], $data);
 
             if ($uploadedFile) {
