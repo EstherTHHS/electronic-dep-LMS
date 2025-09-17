@@ -15,20 +15,6 @@ class SubjectController extends Controller
     {
         $this->subjectRepository = $subjectRepository;
     }
-    public static function middleware(): array
-    {
-        return [
-            new Middleware('permission:getYears', only: ['getYears']),
-            new Middleware('permission:getSubjects', only: ['getSubjects']),
-            new Middleware('permission:getSubjectById', only: ['getSubjectById']),
-            new Middleware('permission:storeSubject', only: ['storeSubject']),
-            new Middleware('permission:updateSubjectById', only: ['updateSubjectById']),
-            new Middleware('permission:deleteSubjectById', only: ['deleteSubjectById']),
-            new Middleware('permission:toggleStatus', only: ['toggleStatus']),
-            new Middleware('permission:attachSubjectToYear', only: ['attachSubjectToYear']),
-            new Middleware('permission:storeTeacherSubject', only: ['storeTeacherSubject']),
-        ];
-    }
 
     public function getYears()
     {
@@ -77,9 +63,9 @@ class SubjectController extends Controller
         $data = $this->subjectRepository->storeTeacherSubject($request->all());
         ResponseData($data);
     }
-    // public function getTeacherSubjects(Request $request)
-    // {
-    //     $data = $this->subjectRepository->getTeacherSubjects($request);
-    //     ResponseData($data);
-    // }
+    public function getTeacherSubjects($teacherId)
+    {
+        $data = $this->subjectRepository->getTeacherSubjects($teacherId);
+         ResponseData($data);
+    }
 }

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('assignment_id')->constrained('assignments')->cascadeOnDelete();
             $table->foreignId('student_id')->constrained('users')->cascadeOnDelete();
             $table->timestamp('submitted_at')->nullable();
-            $table->unsignedSmallInteger('total_mark');
-            $table->decimal('mark_in_percentage', 5, 2);
+            $table->unsignedSmallInteger('total_mark')->nullable();
+            $table->decimal('mark_in_percentage', 5, 2)->nullable();
             $table->foreignId('graded_by')->nullable()->constrained('users')->cascadeOnDelete();
             $table->string('remark')->nullable();
             $table->timestamps();

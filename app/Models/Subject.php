@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Assignment;
+use App\Models\TeacherSubject;
 use Illuminate\Database\Eloquent\Model;
 
 class Subject extends Model
@@ -28,5 +29,10 @@ class Subject extends Model
     public function assignments()
     {
         return $this->hasMany(Assignment::class);
+    }
+
+    public function teacherSubjects()
+    {
+        return $this->hasMany(TeacherSubject::class, 'subject_id');
     }
 }

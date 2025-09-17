@@ -25,7 +25,9 @@ class AssignmentRepository implements AssignmentRepositoryInterface
 
     public function getTeacherYearSubjects($teacher_id)
     {
-        return TeacherSubject::with('yearSubject.year', 'yearSubject.subject', 'teacher')->where('teacher_id', $teacher_id)->paginate(config('common.list_count'));
+        return TeacherSubject::with('subject', 'teacher')
+            ->where('teacher_id', $teacher_id)
+            ->paginate(config('common.list_count'));
     }
 
     public function getAssignments()
@@ -107,7 +109,6 @@ class AssignmentRepository implements AssignmentRepositoryInterface
         try {
             $data['submitted_at'] = now();
             $uploadedFile = $data['file'] ?? null;
-            unset($data['file']);
             $data['total_mark'] = $data['total_mark'] ?? 0;
             $data['mark_in_percentage'] = $data['mark_in_percentage'] ?? 0;
             $submission = Submission::create($data);

@@ -38,13 +38,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/subjects/{id}/toggle-status',  'toggleStatus');
         Route::post('/year-subjects',  'attachSubjectToYear');
         Route::post('/teacher-subjects',  'storeTeacherSubject');
+        Route::get('/teacher-subjects/{teacherId}',  'getTeacherSubjects');
     });
     Route::controller(AssignmentController::class)->group(function () {
         Route::get('/assignments',  'getAssignments');
         Route::post('/assignments',  'storeAssignment');
         Route::get('/teachers',  'getTeachers');
         Route::get('/students',  'getStudents');
-        Route::get('/teacher-subjects/{teacher_id}',  'getTeacherYearSubjects');
+        Route::get('/teacher-year-subjects/{teacherId}',  'getTeacherYearSubjects');
 
         Route::get('/assignments/{id}',  'getAssignmentById');
         Route::post('/assignment-categories', 'storeAssignmentCategory');

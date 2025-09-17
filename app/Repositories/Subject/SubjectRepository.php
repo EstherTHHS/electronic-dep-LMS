@@ -29,26 +29,30 @@ class SubjectRepository implements SubjectRepositoryInterface
     {
         return Subject::find($id);
     }
+
     public function storeSubject($data)
     {
-        $yearId = $data['year_id'] ?? null;
-        $teacher_id = $data['teacher_id'] ?? null;
+        return DB::transaction(function () use ($data) {
+            $subject = Subject::create([
+                'name'        => $data['name'],
+                'code'        => $data['code'],
+                'description' => $data['description'] ?? null,
+                'is_active'   => $data['is_active'] ?? true,
+            ]);
 
-        unset($data['year_id']);
-        unset($data['teacher_id']);
+            if (!empty($data['teacher_ids'])) {
+                foreach ($data['teacher_ids'] as $teacherId) {
+                    TeacherSubject::create([
+                        'teacher_id' => $teacherId,
+                        'subject_id' => $subject->id,
+                    ]);
+                }
+            }
 
-        $subject = Subject::create($data);
-
-        if (isset($yearId)) {
-            $subject->years()->attach($yearId);
-        }
-
-        if (isset($teacher_id)) {
-            $subject->teachers()->attach($teacher_id);
-        }
-
-        return $subject;
+            return $subject->load('teacherSubjects.teacher'); // return with teacher data
+        });
     }
+
     public function updateSubjectById($id, $data)
     {
         $subject = Subject::findOrFail($id);
@@ -148,8 +152,12 @@ class SubjectRepository implements SubjectRepositoryInterface
         }
     }
 
-    public function getTeacherSubjects($request)
+    public function getTeacherSubjects($teacherId)
     {
-        return TeacherSubject::with('yearSubject')->get();
+        $teacherSubjects = TeacherSubject::with('subject')
+            ->where('teacher_id', $teacherId)
+            ->get();
+
+        return $teacherSubjects->map(fn($ts) => $ts->subject)->filter();
     }
 }
