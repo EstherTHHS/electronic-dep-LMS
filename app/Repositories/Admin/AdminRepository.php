@@ -37,7 +37,15 @@ class AdminRepository implements AdminRepositoryInterface
         DB::beginTransaction();
         try {
             $user = User::create($data);
+
             $user->assignRole($data['role'] ?? 'admin');
+
+            if (($data['role'] ?? '') === 'student' && isset($data['year_id'])) {
+                $user->studentYear()->create([
+                    'year_id' => $data['year_id'],
+                ]);
+            }
+
             DB::commit();
             ResponseData($user);
         } catch (\Exception $e) {

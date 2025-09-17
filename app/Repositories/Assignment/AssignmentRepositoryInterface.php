@@ -9,8 +9,10 @@ interface AssignmentRepositoryInterface
 {
     public function getTeachers();
     public function getStudents();
+    public function getStudentAssignments($id);
     public function getTeacherYearSubjects($teacher_id);
     public function getAssignments();
+    public function getAssignmentsByTeacherId($teacherId);
     public function storeAssignment($data);
     public function getAssignmentById($id);
     public function storeAssignmentCategory($data);

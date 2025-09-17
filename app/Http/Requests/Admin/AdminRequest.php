@@ -36,7 +36,8 @@ class AdminRequest extends APIRequest
             'qualification' => 'nullable|string|max:255',
             'birth_date' => 'nullable|date',
             'address' => 'nullable|string|max:255',
-            'role' => 'nullable'
+            'role' => 'nullable',
+            'year_id' => 'nullable',
 
         ];
     }

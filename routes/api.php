@@ -42,12 +42,14 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::controller(AssignmentController::class)->group(function () {
         Route::get('/assignments',  'getAssignments');
+        Route::get('/assignments/{teacherId}/teacher',  'getAssignmentsByTeacherId');
         Route::post('/assignments',  'storeAssignment');
         Route::get('/teachers',  'getTeachers');
         Route::get('/students',  'getStudents');
         Route::get('/teacher-year-subjects/{teacherId}',  'getTeacherYearSubjects');
 
         Route::get('/assignments/{id}',  'getAssignmentById');
+        Route::get('/assignments/{studentId}/student',  'getStudentAssignments');
         Route::post('/assignment-categories', 'storeAssignmentCategory');
         Route::get('/assignment-categories', 'getAssignmentCategories');
         Route::get('/assignment-categories/{id}', 'getAssignmentCategoryById');

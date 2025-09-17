@@ -9,6 +9,7 @@ use App\Models\YearSubject;
 use App\Models\TeacherSubject;
 use App\Models\AssignmentCategory;
 use App\Models\Year;
+use App\Models\StudentYear;
 use Illuminate\Support\Facades\DB;
 
 class AssignmentRepository implements AssignmentRepositoryInterface
@@ -16,6 +17,15 @@ class AssignmentRepository implements AssignmentRepositoryInterface
     public function getTeachers()
     {
         return User::role('teacher')->orderBy('id', 'desc')->paginate(config('common.list_count'));
+    }
+
+    public function getStudentAssignments($studentId)
+    {
+        $studentYear = StudentYear::with('year.subjects.assignments')
+            ->where('student_id', $studentId)
+            ->firstOrFail();
+
+        return $studentYear->year->subjects->flatMap->assignments;
     }
 
     public function getStudents()
@@ -34,6 +44,16 @@ class AssignmentRepository implements AssignmentRepositoryInterface
     {
         return Assignment::with(['assignmentCategory', 'subject', 'teacher', 'media', 'submissions.media'])
             ->orderBy('id', 'desc')
+            ->paginate(config('common.list_count'))->map(function ($assignment) {
+                $assignment->file_url = $assignment->getFirstMediaUrl('assignment');
+                $assignment->file_path = $assignment->getFirstMediaPath('assignment');
+                return $assignment;
+            });
+    }
+    public function getAssignmentsByTeacherId($teacherId) {
+        return Assignment::with(['assignmentCategory', 'subject', 'teacher', 'media', 'submissions.media'])
+            ->orderBy('id', 'desc')
+            ->where('teacher_id', $teacherId)
             ->paginate(config('common.list_count'))->map(function ($assignment) {
                 $assignment->file_url = $assignment->getFirstMediaUrl('assignment');
                 $assignment->file_path = $assignment->getFirstMediaPath('assignment');

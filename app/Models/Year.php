@@ -15,4 +15,5 @@ class Year extends Model
     {
         return $this->belongsToMany(Subject::class, 'year_subjects', 'year_id', 'subject_id');
     }
+
 }

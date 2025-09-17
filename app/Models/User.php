@@ -74,4 +74,9 @@ class User extends Authenticatable
     {
         return $this->password;
     }
+
+    public function studentYear()
+    {
+        return $this->hasOne(StudentYear::class, 'student_id', 'id');
+    }
 }

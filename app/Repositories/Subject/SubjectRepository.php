@@ -33,6 +33,7 @@ class SubjectRepository implements SubjectRepositoryInterface
     public function storeSubject($data)
     {
         return DB::transaction(function () use ($data) {
+            // Create the subject
             $subject = Subject::create([
                 'name'        => $data['name'],
                 'code'        => $data['code'],
@@ -40,16 +41,21 @@ class SubjectRepository implements SubjectRepositoryInterface
                 'is_active'   => $data['is_active'] ?? true,
             ]);
 
-            if (!empty($data['teacher_ids'])) {
-                foreach ($data['teacher_ids'] as $teacherId) {
-                    TeacherSubject::create([
-                        'teacher_id' => $teacherId,
-                        'subject_id' => $subject->id,
-                    ]);
-                }
+            if (!empty($data['teacher_id'])) {
+                $teacherIds = is_array($data['teacher_id'])
+                ? $data['teacher_id']
+                : [$data['teacher_id']];
+                $subject->teachers()->sync($teacherIds);
             }
 
-            return $subject->load('teacherSubjects.teacher'); // return with teacher data
+            if (!empty($data['year_id'])) {
+                $yearIds = is_array($data['year_id'])
+                ? $data['year_id']
+                : [$data['year_id']];
+                $subject->years()->sync($yearIds);
+            }
+
+            return $subject->load('teachers', 'years');
         });
     }
 

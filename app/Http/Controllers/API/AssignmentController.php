@@ -23,6 +23,11 @@ class AssignmentController extends Controller
         ResponseData($assignments);
     }
 
+    public function getAssignmentsByTeacherId($teacherId){
+        $assignments = $this->assignmentRepository->getAssignmentsByTeacherId($teacherId);
+        ResponseData($assignments);
+    }
+
     public function getTeachers(){
         $teachers = $this->assignmentRepository->getTeachers();
         ResponseData($teachers);
@@ -31,6 +36,12 @@ class AssignmentController extends Controller
     public function getStudents(){
         $students = $this->assignmentRepository->getStudents();
         ResponseData($students);
+    }
+
+    public function getStudentAssignments($studentId)
+    {
+        $assignments = $this->assignmentRepository->getStudentAssignments($studentId);
+        ResponseData($assignments);
     }
 
     public function getTeacherYearSubjects($teacher_id){
@@ -46,7 +57,7 @@ class AssignmentController extends Controller
     public function storeAssignmentCategory(Request $request){
         $assignmentCategory = $this->assignmentRepository->storeAssignmentCategory($request->all());
         ResponseData($assignmentCategory);
-    }   
+    }
 
     public function getAssignmentCategories(){
         $assignmentCategories = $this->assignmentRepository->getAssignmentCategories();
