@@ -14,9 +14,16 @@ class AdminRepository implements AdminRepositoryInterface
     public function getAll($request)
     {
         $query = User::with('roles')->orderBy('id', 'desc');
-        if ($request && $request->has('role') && !empty($request->role)) {
-            $query->whereHas('roles', function ($q) use ($request) {
-                $q->where('name', $request->role);
+
+        if ($request && $request->has('keyword') && !empty($request->keyword)) {
+            $keyword = $request->keyword;
+
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'LIKE', "%{$keyword}%")
+                    ->orWhere('email', 'LIKE', "%{$keyword}%");
+                $q->orWhereHas('roles', function ($qRole) use ($keyword) {
+                    $qRole->where('name', 'LIKE', "%{$keyword}%");
+                });
             });
         }
 

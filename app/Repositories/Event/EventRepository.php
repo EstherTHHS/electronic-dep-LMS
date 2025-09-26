@@ -34,6 +34,29 @@ class EventRepository implements EventRepositoryInterface
             throw $th;
         }
     }
+    public function updateEvent($id, $data)
+    {
+        DB::beginTransaction();
+        try {
+            $event = Event::findOrFail($id);
+            $uploadedFile = $data['file'] ?? null;
+            $event->update($data);
+
+            if ($uploadedFile) {
+                $event->clearMediaCollection('event');
+                $event->addMedia($uploadedFile)
+                    ->usingName($uploadedFile->getClientOriginalName())
+                    ->toMediaCollection('event');
+            }
+
+            DB::commit();
+            return $event;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            ResponseMessage($th->getMessage(), 402);
+            throw $th;
+        }
+    }
 
     public function getEventById($id)
     {
@@ -56,8 +79,8 @@ class EventRepository implements EventRepositoryInterface
             if($uploadedFile){
                 $lab->clearMediaCollection('lab');
                 $lab->addMedia($uploadedFile)
-                ->usingName($uploadedFile->getClientOriginalName())
-                ->toMediaCollection('lab');
+                    ->usingName($uploadedFile->getClientOriginalName())
+                    ->toMediaCollection('lab');
             }
             DB::commit();
             return $lab;
@@ -66,6 +89,12 @@ class EventRepository implements EventRepositoryInterface
             ResponseMessage($th->getMessage(), 402);
             throw $th;
         }
+    }
+
+    public function updateLab($id, $data)
+    {
+        $data['id'] = $id;
+        return $this->updateOrCreateLab($data);
     }
 
     public function getLabs()

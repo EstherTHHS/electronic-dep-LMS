@@ -64,11 +64,13 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::controller(EventController::class)->group(function () {
         Route::post('/events',  'storeEvent');
+        Route::post('/events/{id}',  'updateEvent');
         Route::get('/events', 'getEvents');
         Route::get('/events/{id}', 'getEventById');
         Route::delete('/events/{id}', 'deleteEventById');
 
         Route::post('/labs',  'updateOrCreateLab');
+        Route::post('/labs/{id}' , 'updateLab');
         Route::get('/labs', 'getLabs');
         Route::get('/labs/{id}', 'getLabById');
         Route::delete('/labs/{id}', 'deleteLabById');

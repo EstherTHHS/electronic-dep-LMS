@@ -8,9 +8,11 @@ interface EventRepositoryInterface
 {
     public function getEvents();
     public function storeEvent($data);
+    public function updateEvent($id ,$data);
     public function getEventById($id);
     public function deleteEventById($id);
     public function updateOrCreateLab($data);
+    public function updateLab($id ,$data);
     public function getLabs();
     public function getLabById($id);
     public function deleteLabById($id);

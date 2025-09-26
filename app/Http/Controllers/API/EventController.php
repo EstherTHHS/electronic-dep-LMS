@@ -29,6 +29,14 @@ class EventController extends Controller
         $event = $this->eventRepository->storeEvent($request->all());
         ResponseData($event);
     }
+
+    public function updateEvent(Request $request, $id)
+    {
+        $data = $request->all();
+        $event = $this->eventRepository->updateEvent($id, $data);
+        ResponseData($event);
+    }
+
     public function deleteEventById($id){
         $event = $this->eventRepository->deleteEventById($id);
         ResponseData($event);
@@ -36,6 +44,11 @@ class EventController extends Controller
 
     public function updateOrCreateLab(Request $request){
         $lab = $this->eventRepository->updateOrCreateLab($request->all());
+        ResponseData($lab);
+    }
+
+    public function updateLab(Request $request , $id){
+        $lab = $this->eventRepository->updateLab($id ,$request->all());
         ResponseData($lab);
     }
 
