@@ -80,9 +80,14 @@ class AssignmentController extends Controller
     }
 
     public function storeSubmission(Request $request){
+        if (!$request->hasFile('file')) {
+            return response()->json(['error' => 'File input is missing.'], 400);
+        }
+
         $submission = $this->assignmentRepository->storeSubmission($request->all() , $request->file('file'));
         ResponseData($submission);
     }
+
     public function updateSubmissionById($id, Request $request){
         $submission = $this->assignmentRepository->updateSubmissionById($id, $request->all());
         ResponseData($submission);
