@@ -28,6 +28,11 @@ class AssignmentController extends Controller
         ResponseData($assignments);
     }
 
+    public function getAssignmentsByStudentId($studentId){
+        $assignments = $this->assignmentRepository->getAssignmentsByStudentId($student);
+        ResponseData($assignments);
+    }
+
     public function getTeachers(){
         $teachers = $this->assignmentRepository->getTeachers();
         ResponseData($teachers);
@@ -75,7 +80,7 @@ class AssignmentController extends Controller
     }
 
     public function storeSubmission(Request $request){
-        $submission = $this->assignmentRepository->storeSubmission($request->all());
+        $submission = $this->assignmentRepository->storeSubmission($request->all() , $request->file('file'));
         ResponseData($submission);
     }
     public function updateSubmissionById($id, Request $request){

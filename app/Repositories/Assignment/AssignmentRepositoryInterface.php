@@ -13,13 +13,14 @@ interface AssignmentRepositoryInterface
     public function getTeacherYearSubjects($teacher_id);
     public function getAssignments();
     public function getAssignmentsByTeacherId($teacherId);
+    public function getAssignmentsByStudentId($studentId);
     public function storeAssignment($data);
     public function getAssignmentById($id);
     public function storeAssignmentCategory($data);
     public function getAssignmentCategories();
     public function getAssignmentCategoryById($id);
     public function deleteAssignmentFile($id);
-    public function storeSubmission($data);
+    public function storeSubmission($data , $file);
     public function updateSubmissionById($id, $data);
     public function getSubjectListByYearId($yearId);
     public function getSubmissionList(Request $request);

@@ -21,11 +21,24 @@ class AssignmentRepository implements AssignmentRepositoryInterface
 
     public function getStudentAssignments($studentId)
     {
-        $studentYear = StudentYear::with('year.subjects.assignments')
+        $studentYear = StudentYear::with('year.subjects.assignments.media')
             ->where('student_id', $studentId)
             ->firstOrFail();
 
-        return $studentYear->year->subjects->flatMap->assignments;
+        $assignments = $studentYear->year->subjects->flatMap->assignments;
+
+        return $assignments->map(function ($assignment) use ($studentId) {
+            $isSubmitted = $assignment->submissions()
+                ->where('student_id', $studentId)
+                ->exists();
+
+            $assignment->is_submitted = $isSubmitted;
+
+            $assignment->file_url = $assignment->getFirstMediaUrl('assignment');
+            $assignment->file_path = $assignment->getFirstMediaPath('assignment');
+
+            return $assignment;
+        });
     }
 
     public function getStudents()
@@ -50,6 +63,29 @@ class AssignmentRepository implements AssignmentRepositoryInterface
                 return $assignment;
             });
     }
+
+    public function getAssignmentsByStudentId($studentId)
+    {
+        $assignments = Assignment::with(['assignmentCategory', 'subject', 'teacher', 'media'])
+            ->withExists(['submissions' => function ($query) use ($studentId) {
+                $query->where('student_id', $studentId);
+            }])
+            ->orderBy('id', 'desc')
+            ->paginate(config('common.list_count'))
+            ->through(function ($assignment) {
+                $assignment->file_url = $assignment->getFirstMediaUrl('assignment');
+                $assignment->file_path = $assignment->getFirstMediaPath('assignment');
+
+                $assignment->is_submitted = $assignment->submissions_exists;
+
+                unset($assignment->submissions_exists);
+
+                return $assignment;
+            });
+
+        return $assignments;
+    }
+
     public function getAssignmentsByTeacherId($teacherId) {
         return Assignment::with(['assignmentCategory', 'subject', 'teacher', 'media', 'submissions.media'])
             ->orderBy('id', 'desc')
@@ -122,17 +158,16 @@ class AssignmentRepository implements AssignmentRepositoryInterface
         $assignment->deleteMedia('assignment');
     }
 
-    public function storeSubmission($data)
+    public function storeSubmission($data , $file)
     {
         DB::beginTransaction();
         try {
             $data['submitted_at'] = now();
-            $uploadedFile = $data['file'] ?? null;
+            $uploadedFile = $file ?? null;
             $data['total_mark'] = $data['total_mark'] ?? 0;
             $data['mark_in_percentage'] = $data['mark_in_percentage'] ?? 0;
             $submission = Submission::create($data);
             if ($uploadedFile) {
-                $submission->clearMediaCollection('submission');
                 $submission->addMedia($uploadedFile)
                     ->usingName($uploadedFile->getClientOriginalName())
                     ->toMediaCollection('submission');
@@ -183,16 +218,19 @@ class AssignmentRepository implements AssignmentRepositoryInterface
             ]
         )
             ->orderBy('id', 'desc');
+
         if ($request->has('teacher_id')) {
             $submission = $submission->whereHas('assignment', function ($query) use ($request) {
                 $query->where('teacher_id', $request->teacher_id);
             });
         }
+
         if ($request->has('subject_id')) {
             $submission = $submission->whereHas('assignment', function ($query) use ($request) {
                 $query->where('subject_id', $request->subject_id);
             });
         }
+
         if ($request->has('year_id')) {
             $submission = $submission->whereHas('assignment.subject.years', function ($query) use ($request) {
                 $query->where('years.id', $request->year_id);
@@ -205,6 +243,7 @@ class AssignmentRepository implements AssignmentRepositoryInterface
     {
         return Submission::with(
             [
+                'assignment',
                 'assignment.assignmentCategory',
                 'assignment.subject',
                 'assignment.subject.years',
