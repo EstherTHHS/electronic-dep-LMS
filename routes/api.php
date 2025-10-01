@@ -16,6 +16,39 @@ use App\Http\Controllers\API\StatsController;
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/users', [UserController::class, 'store']);
 
+Route::controller(SubjectController::class)->group(function () {
+    Route::get('/years',  'getYears');
+    Route::get('/subjects',  'getSubjects');
+    Route::get('/subjects/{id}',  'getSubjectById');
+    Route::post('/subjects',  'storeSubject');
+    Route::post('/subjects/{id}',  'updateSubjectById');
+    Route::delete('/subjects/{id}',  'deleteSubjectById');
+    Route::post('/subjects/{id}/toggle-status',  'toggleStatus');
+    Route::post('/year-subjects',  'attachSubjectToYear');
+    Route::post('/teacher-subjects',  'storeTeacherSubject');
+    Route::get('/teacher-subjects/{teacherId}',  'getTeacherSubjects');
+});
+
+Route::controller(EventController::class)->group(function () {
+    Route::post('/events',  'storeEvent');
+    Route::post('/events/{id}',  'updateEvent');
+    Route::get('/events', 'getEvents');
+    Route::get('/events/{id}', 'getEventById');
+    Route::delete('/events/{id}', 'deleteEventById');
+
+    Route::post('/labs',  'updateOrCreateLab');
+    Route::post('/labs/{id}' , 'updateLab');
+    Route::get('/labs', 'getLabs');
+    Route::get('/labs/{id}', 'getLabById');
+    Route::delete('/labs/{id}', 'deleteLabById');
+
+    Route::get('/timetables', 'getTimetables');
+    Route::post('/timetables',  'storeTimetable');
+    Route::post('/timetables/{id}',  'updateTimetable');
+    Route::get('/timetables/{id}', 'getTimetable');
+    Route::delete('/timetables/{id}', 'deleteTimetable');
+});
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 

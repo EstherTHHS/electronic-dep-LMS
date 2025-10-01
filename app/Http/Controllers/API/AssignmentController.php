@@ -29,7 +29,7 @@ class AssignmentController extends Controller
     }
 
     public function getAssignmentsByStudentId($studentId){
-        $assignments = $this->assignmentRepository->getAssignmentsByStudentId($student);
+        $assignments = $this->assignmentRepository->getAssignmentsByStudentId($studentId);
         ResponseData($assignments);
     }
 
