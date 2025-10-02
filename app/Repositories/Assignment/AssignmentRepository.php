@@ -66,20 +66,23 @@ class AssignmentRepository implements AssignmentRepositoryInterface
 
     public function getAssignmentsByStudentId($studentId)
     {
-        $assignments = Assignment::with(['assignmentCategory', 'subject', 'teacher', 'media'])
-            ->withExists(['submissions' => function ($query) use ($studentId) {
+        $assignments = Assignment::with([
+            'assignmentCategory',
+            'subject',
+            'teacher',
+            'media',
+            'submissions' => function ($query) use ($studentId) {
                 $query->where('student_id', $studentId);
-            }])
+            }
+        ])
             ->orderBy('id', 'desc')
             ->paginate(config('common.list_count'))
             ->through(function ($assignment) {
                 $assignment->file_url = $assignment->getFirstMediaUrl('assignment');
                 $assignment->file_path = $assignment->getFirstMediaPath('assignment');
-
-                $assignment->is_submitted = $assignment->submissions_exists;
-
-                unset($assignment->submissions_exists);
-
+                $submission = $assignment->submissions->first();
+                $assignment->is_submitted = (bool) $submission;
+                unset($assignment->submissions);
                 return $assignment;
             });
 

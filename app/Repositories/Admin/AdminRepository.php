@@ -32,7 +32,7 @@ class AdminRepository implements AdminRepositoryInterface
 
     public function getById($id)
     {
-        $user = User::with('roles')->find($id);
+        $user = User::with('roles' , 'studentYear.year')->find($id);
         if (!$user) {
             ResponseMessage('Admin not found', 404);
         }
@@ -62,26 +62,35 @@ class AdminRepository implements AdminRepositoryInterface
         }
     }
 
-    public function update($id, array $data)
-    {
-        $user = User::find($id);
-        if (! $user) {
-            ResponseMessage('Admin not found', 404);
-        }
-        DB::beginTransaction();
-        try {
-            $user->update($data);
-            if (isset($data['role']) && $data['role'] !== null) {
-                $user->syncRoles($data['role']);
-            }
-            DB::commit();
-            ResponseData($user);
-        } catch (\Exception $e) {
-            DB::rollback();
-            ResponseMessage($e->getMessage(), 402);
-            throw $e;
-        }
+public function update($id, array $data)
+{
+    $user = User::find($id);
+    if (! $user) {
+        ResponseMessage('Admin not found', 404);
     }
+    DB::beginTransaction();
+    try {
+        $user->update($data);
+
+        if (isset($data['year_id']) && $data['year_id'] !== null) {
+            $user->studentYear()->updateOrCreate(
+                ['student_id' => $user->id],
+                ['year_id' => $data['year_id']]
+            );
+        }
+
+        if (isset($data['role']) && $data['role'] !== null) {
+            $user->syncRoles($data['role']);
+        }
+
+        DB::commit();
+        ResponseData($user);
+    } catch (\Exception $e) {
+        DB::rollback();
+        ResponseMessage($e->getMessage(), 402);
+        throw $e;
+    }
+}
 
     public function delete($id)
     {

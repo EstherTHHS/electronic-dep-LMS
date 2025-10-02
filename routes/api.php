@@ -52,7 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/assignments', 'getAssignments');
         Route::get('/assignments/{teacherId}/teacher', 'getAssignmentsByTeacherId');
         Route::post('/assignments', 'storeAssignment');
-        Route::get('/teachers', 'getTeachers');
+        // Route::get('/teachers', 'getTeachers');
         Route::get('/students', 'getStudents');
         Route::get('/teacher-year-subjects/{teacherId}', 'getTeacherYearSubjects');
 
